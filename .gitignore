@@ -1,0 +1,19 @@
+# VSCode
+.vscode/launch.json
+
+# Build Artefacts
+build/
+
+# Generator Artefacts
+**/_generated/
+
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv

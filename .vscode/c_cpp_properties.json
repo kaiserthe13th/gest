@@ -1,0 +1,44 @@
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
+{
+    "configurations": [
+        {
+            "name": "Win32",
+            "includePath": [
+                "${workspaceFolder}/include"
+            ],
+            "defines": [
+                "_DEBUG",
+                "UNICODE",
+                "_UNICODE",
+                "INTELLISENSE_VSCODE",
+                "__bool_true_false_are_defined=1"
+            ],
+            "windowsSdkVersion": "10.0.26100.0",
+            "compilerPath": "cl.exe",
+            "intelliSenseMode": "windows-msvc-x64",
+            "cStandard": "c11",
+            "compilerArgs": [
+                "/experimental:c11atomics",
+                "/Zc:preprocessor",
+                "/fp:precise"
+            ],
+            "forcedInclude": ["${workspaceFolder}/include/gest-polyfills/msvc.h"]
+        },
+        {
+            "name": "Linux",
+            "includePath": [
+                "${workspaceFolder}/include"
+            ],
+            "defines": [
+                "_DEBUG",
+                "UNICODE",
+                "_UNICODE",
+                "INTELLISENSE_VSCODE"
+            ],
+            "compilerPath": "gcc",
+            "intelliSenseMode": "linux-gcc-x64",
+            "cStandard": "c11"
+        }
+    ],
+    "version": 4
+}
