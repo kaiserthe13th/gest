@@ -17,10 +17,10 @@ typedef struct GestAllocator GestAllocator;
 typedef struct GestBumpAllocator GestBumpAllocator;
 typedef struct GestBumpAllocatorHeader GestBumpAllocatorHeader;
 
-/// Zeroes out the allocated buffer
+//// Zeroes out the allocated buffer
 #define GEST_ALLOC_ZEROED (1 << 0)
-// Remember the values attached to the pointer, such that when freeing, you don't need to heed the
-// size and alignment arguments (0, 0) is accepted.
+/// Remember the values attached to the pointer, such that when freeing, you don't need to heed the
+/// size and alignment arguments (0, 0) is accepted.
 #define GEST_ALLOC_REMEMBER (1 << 1)
 
 /// The unified allocator function for all memory operations.
