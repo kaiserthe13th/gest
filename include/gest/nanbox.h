@@ -57,7 +57,7 @@ inline static uint64_t gestUnbox(uint64_t boxed) {
 /// @return A boxed-NaN containing `unboxed`.
 inline static uint64_t gestBox(uint64_t unboxed, uint64_t type) {
 #ifdef _DEBUG
-    assert(unboxed < (1ULL << GEST_SAFETY_BIT));
+    assert(unboxed < (1ULL << GEST_TYPE_BIT));
     assert(type < GEST_NAN_BOX_TYPE_COUNT);
 #endif // _DEBUG
 
