@@ -17,6 +17,19 @@ type Bitfield = int
 
 
 def unify_ranges(ranges: list[range]) -> list[range]:
+    """
+    Merge overlapping or adjacent ranges into a unified list of non-overlapping ranges.
+
+    This function takes a list of potentially overlapping ranges and combines them into
+    a minimal set of non-overlapping ranges sorted by start position. Useful for combining
+    multiple codepoint ranges that may have gaps or overlaps.
+
+    Args:
+        ranges: A list of range objects to merge.
+
+    Returns:
+        A sorted list of non-overlapping merged ranges. Empty list if input is empty.
+    """
     if not ranges:
         return []
 
@@ -27,6 +40,8 @@ def unify_ranges(ranges: list[range]) -> list[range]:
     for i in range(1, len(ranges)):
         nx = ranges[i]
         if nx.start <= curr.stop:
+            # Ranges are adjacent or overlapping
+            
             if nx.stop > curr.stop:
                 curr = range(curr.start, nx.stop)
         else:
@@ -38,6 +53,19 @@ def unify_ranges(ranges: list[range]) -> list[range]:
 
 
 def invert_ranges(ranges: list[range], within: range) -> list[range]:
+    """
+    Invert a list of ranges to get the complement within a larger range.
+
+    Given a list of ranges and a bounding range, returns all the "gaps" (ranges not covered
+    by the input ranges) within the bounding range.
+
+    Args:
+        ranges: A list of ranges to invert.
+        within: The bounding range that defines the search space.
+
+    Returns:
+        A list of ranges representing all positions within `within` not covered by `ranges`.
+    """
     result = []
     ranges = unify_ranges(ranges)
     curr = within.start
@@ -49,6 +77,18 @@ def invert_ranges(ranges: list[range], within: range) -> list[range]:
 
 
 def re_named_codepoint(name: str) -> str:
+    """
+    Generate a regex pattern for matching a named Unicode codepoint hexadecimal value.
+    
+    Creates a named capture group that matches 1-6 hexadecimal digits, suitable for
+    parsing Unicode codepoint ranges in the standard Unicode data format.
+    
+    Args:
+        name: The name of the capture group (e.g., 'start', 'end').
+    
+    Returns:
+        A regex pattern string for a named group matching hex digits.
+    """
     return rf"(?P<{name}>[0-9A-Fa-f]{{1,6}})"
 
 
@@ -60,12 +100,20 @@ PAGE_WIDTH = 256
 
 def parse_codepoint_range_str(codepoint: str) -> range | None:
     """
-    This function is used to convert a codepoint range expression into something more understandable.
-
-    Arguments:
-        codepoint (str): The codepoint range expression in string form.
-
-    NOTE: This function expects a range to be given to it, which it parses, not an entire line.
+    Parse a Unicode codepoint range expression string into a Python range object.
+    
+    Converts range expressions like "0041" or "0041..005A" (from Unicode data files)
+    into Python range objects. Returns None if the input is malformed.
+    
+    Args:
+        codepoint: A codepoint range expression string (may be a single value or range).
+    
+    Returns:
+        A range object representing the parsed codepoint range, or None if parsing fails.
+    
+    Example:
+        parse_codepoint_range_str("0041") -> range(65, 66)  # Single character
+        parse_codepoint_range_str("0041..005A") -> range(65, 91)  # Range A-Z
     """
     m = re.match(CODEPOINT_RANGE_RE, codepoint.strip())
     if m is None:
@@ -84,6 +132,25 @@ BYTE_BITS = 8
 def create_mapping_tables(
     ranges: list[range], level: int
 ) -> tuple[list[int], list[tuple[int, ...]], list[Bitfield]]:
+    """
+    Create optimized 3-level trie tables for fast Unicode property lookup.
+    
+    Generates a hierarchical trie structure that enables O(1) constant-time lookups
+    for Unicode character properties. The trie consists of:
+    - L1 Trie: Maps Unicode planes to L2 trie entries
+    - L2 Trie: Maps pages to bitfield entries
+    - Bitfields: 256-bit fields encoding character properties (packed into four 64-bit integers)
+    
+    Args:
+        ranges: A list of codepoint ranges representing characters with a property.
+        level: The L1 trie level (typically 8). Higher levels = larger L1 trie, smaller L2 tries.
+    
+    Returns:
+        A tuple of (l1trie, l2trie, bitfields):
+        - l1trie: List of 256 L1 trie entries mapping to L2 trie indices
+        - l2trie: List of tuples representing L2 trie pages
+        - bitfields: List of unique 256-bit bitfields used for property storage
+    """
     # dict[_T, tuple[int, _T]] is a great way to make a makeshift ordered set
     uniq_bitfields: dict[Bitfield, tuple[int, Bitfield]] = {}
     l2trie_dict: dict[tuple[int, ...], tuple[int, list[int]]] = {}
@@ -203,6 +270,26 @@ def gen_uni(
     file: IO,
     impl_file: IO,
 ):
+    """
+    Generate C header and implementation code for Unicode property checking functions.
+    
+    Outputs complete C code for checking whether a Unicode character has a specific property.
+    Generates both slow O(logn) binary search and fast O(1) trie-based functions with and
+    without bounds checking.
+    
+    Args:
+        name: The property name (e.g., 'ID_Start', 'XID_Continue').
+        ranges: List of codepoint ranges with the property.
+        l1trie: L1 trie lookup table.
+        l2trie: L2 trie lookup table.
+        bitfields: Bitfield lookup table.
+        level: The L1 trie level used in generation.
+        file: Output file handle for C header declarations.
+        impl_file: Output file handle for C function implementations.
+    
+    Raises:
+        AssertionError: If trie structure exceeds implementation limits (256 entries).
+    """
     assert (
         len(l1trie) == 256
     ), f"{name}: L1 Trie does not cover the full space required."
@@ -347,6 +434,18 @@ def gen_uni(
 
 
 def gen_prop_mapping_tables_task(args_tuple):
+    """
+    Generate trie tables for a single Unicode property (designed for parallel execution).
+    
+    This is a worker function for multiprocessing that generates the trie structure
+    for one Unicode property. It's wrapped to avoid pickling issues with ProcessPoolExecutor.
+    
+    Args:
+        args_tuple: A tuple of (name, prop_ranges, trie_level).
+    
+    Returns:
+        A tuple of (name, prop_ranges, l1trie, l2trie, bitfields).
+    """
     name, prop_ranges, trie_level = args_tuple
     l1, l2, bitf = create_mapping_tables(prop_ranges, trie_level)
     return name, prop_ranges, l1, l2, bitf
@@ -382,6 +481,22 @@ class UnicodeDataRow:
 
 
 def main(args) -> None:
+    """
+    Main entry point: orchestrate the entire Unicode property code generation pipeline.
+    
+    Reads Unicode Character Database files, generates optimized lookup tables, and outputs
+    C header and implementation files with Unicode property checking functions. Includes
+    optional timing and size reporting.
+    
+    Args:
+        args: Parsed command-line arguments with attributes:
+            - data_dir: Directory containing Unicode data files (default: 'data')
+            - trie_level: L1 trie level for optimization (default: 8)
+            - header: Output file for C header (default: stdout)
+            - code: Output file for C implementation (default: stdout)
+            - time: Set of timing measurements to report ('all', 'read', 'generation', 'write')
+            - size: Whether to report total trie size
+    """
     file, impl_file = io.StringIO(), io.StringIO()
 
     now = 0.0
@@ -514,6 +629,23 @@ def main(args) -> None:
 
 
 def parse_ucd_properties(path: pathlib.Path | str):
+    """
+    Parse Unicode Character Database property files into a structured dictionary.
+    
+    Reads UCD property files (DerivedNormalizationProps.txt, DerivedCoreProperties.txt)
+    and extracts codepoint ranges for each property. Handles properties with and without
+    property values (e.g., "N", "M" for NFC_QC).
+    
+    Args:
+        path: Path to a UCD property file.
+    
+    Returns:
+        A dictionary where:
+        - Keys are property names (e.g., 'XID_Start')
+        - Values are either:
+          - list[range]: For properties without values
+          - dict[str, list[range]]: For properties with values (keyed by value)
+    """
     props: dict[str, list[range] | dict[str, list[range]]] = {}
     with open(path) as f:
         for line in f:
@@ -524,7 +656,9 @@ def parse_ucd_properties(path: pathlib.Path | str):
             codepoint_range = parse_codepoint_range_str(range_str)
             if not codepoint_range:
                 raise ValueError(f"Expected codepoint or codepoint range: {line}")
+            # Some properties have values (like NFC_QC: N/M/Y), others don't
             if key not in props:
+                # dict for valued properties, list for unvalued ones
                 props[key] = {} if value else []
             inst = props[key]
             if isinstance(inst, list):
