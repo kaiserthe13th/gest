@@ -3,3 +3,5 @@ NOTICE.xg
 .vscode
 .git
 README.md
+.clang-format
+CODE_STYLE.md
