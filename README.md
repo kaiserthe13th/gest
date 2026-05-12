@@ -49,8 +49,10 @@ We use code formatting tools for code styling, on top of a small [style guide](C
 
 ### :scroll: License Linting
 
-We use a tool called xg.py for checking licensing of our files. Please use the tool and ensure all files are licensed.
+We use a tool called xg for checking licensing of our files. Please use the tool and ensure all files are licensed.
+
+You can easily use it via premake with:
 
 ```console
-$ uv run --project script script/xg.py -vall ./NOTICE.xg
+$ premake5 xg
 ```

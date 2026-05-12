@@ -61,6 +61,7 @@ newoption {
 
 include "script/uv-setup.lua"
 include "script/unicode.lua"
+include "script/xg.lua"
 
 local channel = _OPTIONS['channel'] or print("defaulting channel to unknown") or "unknown"
 local channelVal = channels[channel] or print("defaulting channel to unknown") or channels["unknown"]
