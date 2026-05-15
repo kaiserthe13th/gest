@@ -110,8 +110,9 @@ assign = { ("let", destructuring_top | id_chain), ":=" }, feed;
 return = [ "^" ], assign;
 
 pragma = "pragma", (identifier | msg_arg);
+global_and_nonlocals = "global" | "nonlocal", (identifier { ",", identifier });
 
-expr = return | pragma;
+expr = return | pragma | global_and_nonlocals;
 statement = expr, ".";
 program = [ { statement }, expr ];
 ```
