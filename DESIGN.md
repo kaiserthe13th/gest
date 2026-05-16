@@ -228,7 +228,7 @@ Expr parse := ^[|src|
         op := src takeIf: [|x| '+-' contains: x].
         op nil? ifTrue: [^parseLiteral src: src].
         inner := parseUnary src: src.
-        ^UnaryOp op: op, inner: inner.
+        ^UnaryExpr op: op, inner: inner.
     ].
     parseAdd := ^[|src|
         src skipWhile: [|x| x space?].
@@ -240,7 +240,7 @@ Expr parse := ^[|src|
             ].
             src skipWhile: [|x| x space?].
             right := parseUnary src: src.
-            left := BinaryOp left: left, op: op, right: right.
+            left := BinaryExpr left: left, op: op, right: right.
         ].
     ].
     parseMul := ^[|src|
@@ -251,7 +251,7 @@ Expr parse := ^[|src|
 
             src skipWhile: [|x| x space?].
             right := parseAdd src: src.
-            left := BinaryOp left: left, op: op, right: right.
+            left := BinaryExpr left: left, op: op, right: right.
         ].
     ].
     parseMul src: src.
