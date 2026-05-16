@@ -381,7 +381,7 @@ def gen_uni(
         file=file,
     )
     print(
-        f"const uint64_t GEST_UNI_{name}_BITF[{len(bitfields)}][4] = {{\n    {',\n    '.join(f'{{{(bitfield >> 192) & B64MASK}ULL, {(bitfield >> 128) & B64MASK}ULL, {(bitfield >> 64) & B64MASK}ULL, {bitfield & B64MASK}}}ULL' for bitfield in bitfields)}\n}};",
+        f"const uint64_t GEST_UNI_{name}_BITF[{len(bitfields)}][4] = {{\n    {',\n    '.join(f'{{{(bitfield >> 192) & B64MASK}ULL, {(bitfield >> 128) & B64MASK}ULL, {(bitfield >> 64) & B64MASK}ULL, {bitfield & B64MASK}ULL}}' for bitfield in bitfields)}\n}};",
         file=impl_file,
     )
     # --- #
