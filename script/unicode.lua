@@ -9,7 +9,7 @@ newaction {
     execute     = function()
         local target_dir = util.mpath(path.join("data", "unicode"))
         local script_dir = util.mpath("script")
-        local dl_py_file = util.mpath(path.join("script", "unicode", "gen.py"))
+        local dl_py_file = util.mpath(path.join("script", "unicode", "dl.py"))
 
         print("Creating data/unicode...")
         os.mkdir(target_dir)
