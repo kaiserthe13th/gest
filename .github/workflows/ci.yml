@@ -1,0 +1,98 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build-and-test:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup uv
+        uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b # v8.1.0
+        with:
+          enable-cache: true
+
+      - name: Install Python 3.13
+        run: uv python install 3.13
+
+      - name: Install packages (Linux)
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential pkg-config libuv1-dev unzip wget
+
+      - name: Install premake5 (Linux)
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          PREMAKE_VER="5.0.0-beta2"
+          wget -q "https://github.com/premake/premake-core/releases/download/v${PREMAKE_VER}/premake-${PREMAKE_VER}-linux.tar.gz"
+          tar -xzf "premake-${PREMAKE_VER}-linux.tar.gz"
+          sudo mv premake5 /usr/local/bin/premake5
+          premake5 --version
+
+      - name: Install premake5 (Windows)
+        if: matrix.os == 'windows-latest'
+        shell: pwsh
+        run: |
+          $env:PREMAKE_VER = '5.0.0-beta2'
+          $zip = "premake-$env:PREMAKE_VER-windows.zip"
+          Invoke-WebRequest -Uri "https://github.com/premake/premake-core/releases/download/v$env:PREMAKE_VER/$zip" -OutFile $zip
+          Expand-Archive $zip -DestinationPath .
+          New-Item -ItemType Directory -Force -Path C:\tools | Out-Null
+          Move-Item premake5.exe C:\tools\premake5.exe -Force
+          Add-Content -Path $env:GITHUB_PATH -Value 'C:\tools'
+
+      - name: Prebuild Setup and Code Generation
+        run: |
+          premake5 uv-setup
+          premake5 download-unicode
+          premake5 gen-unicode-headers
+
+      - name: Generate build files (Linux)
+        if: matrix.os == 'ubuntu-latest'
+        run: premake5 gmake2 --test
+
+      - name: Generate build files (Windows)
+        if: matrix.os == 'windows-latest'
+        run: premake5 vs2022 --test
+
+      - name: Build (Linux)
+        if: matrix.os == 'ubuntu-latest'
+        working-directory: build
+        run: make config=staticdebug_bits64
+
+      - name: Build (Windows)
+        if: matrix.os == 'windows-latest'
+        run: |
+          msbuild build/Gest.sln /p:Configuration=StaticDebug /p:Platform=x64
+
+      - name: Run tests (Linux)
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          TEST_BIN=build/gest-test/bin/bits64/StaticDebug/gest-test
+          if [ -x "$TEST_BIN" ]; then
+            "$TEST_BIN"
+          else
+            echo "Test binary not found: $TEST_BIN"
+            ls -R build/gest-test || true
+            exit 1
+          fi
+
+      - name: Run tests (Windows)
+        if: matrix.os == 'windows-latest'
+        shell: pwsh
+        run: |
+          $candidates = @(
+            'build/gest-test/bin/bits64/StaticDebug/gest-test.exe',
+            'build/gest-test/bin/StaticDebug/gest-test.exe',
+            'build/gest-test/Debug/gest-test.exe'
+          )
+          $found = $candidates | Where-Object { Test-Path $_ } | Select-Object -First 1
+          if ($found) { & $found; exit $LASTEXITCODE } else { Write-Error "Test binary not found"; Get-ChildItem -Recurse build/gest-test -File; exit 1 }
