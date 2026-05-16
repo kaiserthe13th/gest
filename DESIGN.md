@@ -331,3 +331,22 @@ graph TD
     TokenStream2 .-> Parser2{{"Parser"}}
     F1 ~~~ F2
 ```
+
+## Philosophy
+
+- Uniformity of semantic models and paradigms are important. They are the axioms of your thought and uniform models reduce contradictions and incomplete statements.
+- As such, it follows that uniformity and fitting expectations is good, until someone tells you it is boring, but show them a language that isn't boring, such as Malbolge, and watch as their faces distort in horror.
+- But, contradictions and incomplete statements exist even in math, where one can ask the question of whether the set of all sets who don't contain themselves contains itself?
+- But even if they exist, what is the way to reduce and avoid them? The answer is simplicity, and a thin layer of abstraction.
+- But you might say "Thin layers of abstractions are bad because boilerplate", then you should realise something:
+- The compiler is smart, so that the average programmer doesn't have to rely on tricks.
+- But every compiler requires its own tricks to do some edge cases, so, we should aim to reduce that.
+- Magic is sin, but so -oh so- is it a beautiful temptress.
+- But realise that magic is an illusion, and thus, if you know what is beneath the veneer, ..., it is more than usable. And thus, make magic non-magical, a known shortcut that shaves of 10 minutes off your journey everytime is better than a teleporter that works on odd days and malfunctions on even days.
+- Syntactic simplicity and expectation does not prevent one from doing magic, the trick is creating an abstraction that is near universally applicable, so that you use one clearly manually desugarable simplification on a dozen problems.
+- Also, realise that linguistic simplicity does not prevent one from having library complexity.
+- Sane file-based modules are awesome, let's do more.
+- Objects and functions in their purest forms are actually really similar if you think about it - please think about it -.
+- If you are thinking of something and it is easy to understand, it might be a good idea.
+- If you are thinking of something and it is hard to understand, it probably isn't a good idea.
+- But keep in mind the audience matters, for something that is hard as a mountain to understand to one person is like taking candy from a baby for another.
