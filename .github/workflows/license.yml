@@ -20,4 +20,4 @@ jobs:
         run: pip install PyYAML tqdm license-expression
 
       - name: Run license checks
-        run: python script/xg.py NOTICE.xg --verify spdx-licenses unlicensed-files license-matches
+        run: python script/xg.py "./NOTICE.xg" -vall
