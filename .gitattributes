@@ -1,0 +1,2 @@
+# Force all *.h files into being C
+*.h linguist-language=C
