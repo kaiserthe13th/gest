@@ -5,3 +5,5 @@ NOTICE.xg
 README.md
 .clang-format
 CODE_STYLE.md
+DESIGN.md
+.github/
