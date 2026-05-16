@@ -270,9 +270,11 @@ Io printLn: 'Result: ' ++ result.
 
 ## Architecture
 
+### Overall Architecture
+
 ```mermaid
 ---
-title: Architecture
+title: Overall Architecture
 ---
 graph TD
     Source([".gest Source File"]) .-> Tokeniser[Tokeniser]
@@ -297,4 +299,35 @@ graph TD
 
     style Source stroke-width:2px
     style Target stroke-width:2px
+```
+
+### Tokenizer
+
+```mermaid
+---
+title: Tokenizer
+---
+graph TD
+    Source1(["a.gest"]) .->|UTF8 Char Stream| Tokenizer1
+    subgraph F1[" "]
+        subgraph Tokenizer1["Tokenizer"]
+            curState1["Current State"] -- Position --> nextToken1["gestNextToken"]
+            nextToken1 -. Updates .-> curState1
+        end
+        nextToken1 -- Token --> TokenStream1([TokenStream])
+    end
+
+    TokenStream1 .-> Parser1{{"Parser"}}
+    
+    Source2(["b.gest"]) .->|UTF8 Char Stream| Tokenizer2
+    subgraph F2[" "]
+        subgraph Tokenizer2["Tokenizer"]
+            curState2["Current State"] -- Position --> nextToken2["gestNextToken"]
+            nextToken2 -. Updates .-> curState2
+        end
+        nextToken2 -- Token --> TokenStream2([TokenStream])
+    end
+
+    TokenStream2 .-> Parser2{{"Parser"}}
+    F1 ~~~ F2
 ```
