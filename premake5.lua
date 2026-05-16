@@ -84,7 +84,7 @@ workspace "Gest"
         buildoptions { "-fno-finite-math-only", "-fno-rounding-math", "-fno-signaling-nans" }
     filter "toolset:msc*"
         buildoptions { "/experimental:c11atomics" }
-        forceincludes { "include/gest-polyfills/msvc.h" }
+        forceincludes { "$(SolutionDir)../include/gest-polyfills/msvc.h" }
     filter {"toolset:msc*", "configurations:*Debug"}
         editandcontinue "Off"
         flags { "NoIncrementalLink" }
