@@ -32,6 +32,8 @@ static_assert(
 );
     #endif
 
+    typedef ptrdiff_t ssize_t;
+
     #ifdef INTELLISENSE_VSCODE
         #ifdef __cplusplus
             #define _Atomic(T) std::atomic<T>
