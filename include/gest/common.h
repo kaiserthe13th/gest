@@ -11,6 +11,12 @@
 #include <stdint.h>
 #include <stdlib.h>
 
+#if defined(__unix__) || defined(__unix) || defined(_POSIX_VERSION)
+    #define IS_POSIX 1
+#else
+    #define IS_POSIX 0
+#endif
+
 #define GEST_STRIFY__(x) #x
 /// Stringifies the input
 #define GEST_STRIFY(x)      GEST_STRIFY__(x)

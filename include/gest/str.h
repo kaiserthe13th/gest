@@ -12,7 +12,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
-#ifdef _POSIX_C_SOURCE
+#if IS_POSIX
     #include <sys/types.h>
 #endif
 
