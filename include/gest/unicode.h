@@ -13,6 +13,8 @@
 
 typedef uint32_t GestU32Char;
 
+struct GestStr;
+
 uint32_t gestUniNextU32Char(struct GestStr *iter, int lossy);
 
 struct GestUTF8EncodedChar__ {
