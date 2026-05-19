@@ -5,16 +5,14 @@
 #include <gest/export.h>
 #include <stddef.h>
 #include <stdint.h>
+#include <gest/str.h>
 
 #define GEST_U32C_EOF ((uint32_t)-1)
 
-typedef struct GestCodepointIterator GestCodepointIterator;
-struct GestCodepointIterator {
-    const uint8_t *source;
-    size_t length;
-};
+typedef uint32_t GestU32Char;
 
-#define GestCodepointIteratorZ(s) \
-    ((GestCodepointIterator){ .source = (uint8_t *)(s), .length = strlen(s) })
-
-uint32_t gestUniNextU32Char(GestCodepointIterator *iter, int lossy);
+uint32_t gestUniNextU32Char(GestBaseStrIter *iter, int lossy);
+struct GestUTF8EncodedChar__ {
+    uint8_t length;
+    GestU32Char enc[4];
+} gestUniC32EncodeUTF8(GestU32Char u32c);
