@@ -66,7 +66,7 @@ int gestStrBufPushU32Char(GestStrBuf *buf, GestU32Char codepoint) {
     return gestStrBufPushStr(buf, utf8Str);
 }
 
-inline int gestStrBufGrowIfNeeded__(GestStrBuf *buf, size_t requiredCapacity) {
+inline static int gestStrBufGrowIfNeeded__(GestStrBuf *buf, size_t requiredCapacity) {
     gestErrno = GEST_ENONE;
     size_t newCapacity = buf->capacity;
     while (requiredCapacity > newCapacity) {
