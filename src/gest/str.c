@@ -62,7 +62,7 @@ GestStr gestStrStripPostfix(GestStr haystack, GestStr needle) {
 
 int gestStrBufPushU32Char(GestStrBuf *buf, GestU32Char codepoint) {
     struct GestUTF8EncodedChar__ utf8EncCh = gestUniC32EncodeUTF8(codepoint);
-    const GestStr utf8Str = { .chars = utf8EncCh.enc, .length = utf8EncCh.length };
+    const GestStr utf8Str = { .chars = (const uint8_t*)utf8EncCh.enc, .length = utf8EncCh.length };
     return gestStrBufPushStr(buf, utf8Str);
 }
 

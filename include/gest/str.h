@@ -7,6 +7,7 @@
 #include <assert.h>
 #include <gest/allocator.h>
 #include <gest/common.h>
+#include <gest/unicode.h>
 #include <string.h>
 #include <stdlib.h>
 #include <stdint.h>
@@ -40,7 +41,7 @@ inline static GestStrBuf gestEmptyStrBuf(GestAllocator *alloc) {
 }
 
 inline static GestStrBuf gestStrBufFromStr(GestAllocator *alloc, GestStr s) {
-    char *chars = gestAllocMany(&alloc, char, s.length, 0);
+    char *chars = gestAllocMany(alloc, char, s.length, 0);
     memcpy(chars, s.chars, s.length);
     return (GestStrBuf){ .alloc = alloc, .capacity = s.length, .chars = chars, .length = s.length };
 }

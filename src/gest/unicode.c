@@ -3,6 +3,7 @@
 
 #include <gest/error.h>
 #include <gest/unicode.h>
+#include <gest/str.h>
 
 #define GEST_UTF8_1BYTE_SEQ_PR 0x00
 #define GEST_UTF8_2BYTE_SEQ_PR 0x80
@@ -10,7 +11,7 @@
 #define GEST_UTF8_4BYTE_SEQ_PR 0xF0
 #define GEST_CONTINUATION_BYTE 0x80
 
-uint32_t gestUniNextU32Char(GestBaseStrIter *iter, int lossy) {
+uint32_t gestUniNextU32Char(struct GestStr *iter, int lossy) {
     while (1) {
         gestErrno = GEST_ENONE;
         if (iter->length <= 0) return GEST_U32C_EOF;
