@@ -1,3 +1,6 @@
+/// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
+/// SPDX-FileCopyrightText: Copyright 2026 Kerem Göksu
+
 #include <gest/error.h>
 #include <gest/str.h>
 #include <gest/unicode.h>
