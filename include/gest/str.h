@@ -8,10 +8,14 @@
 #include <gest/allocator.h>
 #include <gest/common.h>
 #include <gest/unicode.h>
-#include <string.h>
-#include <stdlib.h>
-#include <stdint.h>
 #include <stddef.h>
+#include <stdint.h>
+#include <stdlib.h>
+#include <string.h>
+#ifdef _POSIX_C_SOURCE
+    #include <sys/types.h>
+#endif
+
 
 typedef struct GestStr GestStr;
 typedef struct GestStrBuf GestStrBuf;
@@ -21,7 +25,7 @@ struct GestStr {
     const uint8_t *chars;
 };
 
-#define gstrlit(s) ((GestStr){sizeof(s) - 1, s})
+#define gstrlit(s) ((GestStr){ sizeof(s) - 1, s })
 
 struct GestStrBuf {
     GestAllocator *alloc;
@@ -37,7 +41,7 @@ inline static GestBaseStrIter gestStrToBaseIter(GestStr s) {
 }
 
 inline static GestStrBuf gestEmptyStrBuf(GestAllocator *alloc) {
-    return (GestStrBuf){.alloc = alloc};
+    return (GestStrBuf){ .alloc = alloc };
 }
 
 inline static GestStrBuf gestStrBufFromStr(GestAllocator *alloc, GestStr s) {
@@ -47,13 +51,14 @@ inline static GestStrBuf gestStrBufFromStr(GestAllocator *alloc, GestStr s) {
 }
 
 inline static GestStr gestStrFromStrBuf(GestStrBuf buf) {
-    return (GestStr){.length = buf.length, .chars = buf.chars ? buf.chars : ""};
+    return (GestStr){ .length = buf.length, .chars = buf.chars ? buf.chars : "" };
 }
 
 /// Finds the index at which `needle` is first encountered within `haystack`.
 /// @param haystack The string being searched inside of.
 /// @param needle The substring that is being searched.
-/// @return the index at which in the haystack that the needle was found starting at if found, `-1` if not found
+/// @return the index at which in the haystack that the needle was found starting at if found, `-1`
+/// if not found
 GEST_API ssize_t gestStrIndexSubstr(GestStr haystack, GestStr needle);
 /// Checks whether `haystack` starts with `needle`.
 /// @param haystack The string being searched inside of.
