@@ -11,7 +11,16 @@
 #define GEST_UTF8_4BYTE_SEQ_PR 0xF0
 #define GEST_CONTINUATION_BYTE 0x80
 
-uint32_t gestUniNextU32Char(struct GestStr *iter, int lossy) {
+const void *gestUniIterSaveState(struct GestStr *iter) {
+    return (const void *)iter->chars;
+}
+
+void gestUniIterSeek(struct GestStr *iter, const void *marker) {
+    iter->length += (size_t)iter->chars - (size_t)marker;
+    iter->chars = (const uint8_t *)marker;
+}
+
+GestU32Char gestUniNextU32Char(struct GestStr *iter, int lossy) {
     while (1) {
         gestErrno = GEST_ENONE;
         if (iter->length <= 0) return GEST_U32C_EOF;
@@ -25,7 +34,7 @@ uint32_t gestUniNextU32Char(struct GestStr *iter, int lossy) {
             // It is ascii
             codepoint = c0;
             bytes = 1;
-        } else if ((c0 & GEST_UTF8_3BYTE_SEQ_PR) == GEST_UTF8_4BYTE_SEQ_PR) {
+        } else if ((c0 & GEST_UTF8_3BYTE_SEQ_PR) == GEST_UTF8_2BYTE_SEQ_PR) {
             codepoint = c0 & 0x1F;
             bytes = 2;
         } else if ((c0 & GEST_UTF8_4BYTE_SEQ_PR) == GEST_UTF8_3BYTE_SEQ_PR) {
@@ -99,7 +108,6 @@ struct GestUTF8EncodedChar__ gestUniC32EncodeUTF8(GestU32Char u32c) {
     if (u32c < 0x80) {
         result.length = 1;
         result.enc[0] = u32c;
-        return result;
     } else if (u32c < 0x800) {
         result.length = 2;
         result.enc[0] = GEST_UTF8_2BYTE_SEQ_PR | (u32c >> 6);
@@ -115,6 +123,8 @@ struct GestUTF8EncodedChar__ gestUniC32EncodeUTF8(GestU32Char u32c) {
         result.enc[1] = GEST_CONTINUATION_BYTE | ((u32c >> 12) & 0x3F);
         result.enc[2] = GEST_CONTINUATION_BYTE | ((u32c >> 6) & 0x3F);
         result.enc[3] = GEST_CONTINUATION_BYTE | (u32c & 0x3F);
+    } else {
+        gestErrno = GEST_EBIG;
     }
 
     return result;
