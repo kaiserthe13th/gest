@@ -3,6 +3,8 @@
 ![GitHub License](https://img.shields.io/github/license/kaiserthe13th/gest)
 ![GitHub last commit](https://img.shields.io/github/last-commit/kaiserthe13th/gest)
 
+![Gest Logo Banner](data/image/banner.png)
+
 Gest aims to be a smalltalk-like pure OOP language, but with modern features, and one that has good performance. View [the design](DESIGN.md) for more details.
 
 ## :stopwatch: Current Development Status
