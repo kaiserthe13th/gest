@@ -15,9 +15,9 @@ const void *gestUniIterSaveState(struct GestStr *iter) {
     return (const void *)iter->chars;
 }
 
-void gestUniIterSeek(struct GestStr *iter, const void *marker) {
-    iter->length += (size_t)iter->chars - (size_t)marker;
-    iter->chars = (const uint8_t *)marker;
+void gestUniIterSeek(struct GestStr *iter, const void *token) {
+    iter->length += (size_t)iter->chars - (size_t)token;
+    iter->chars = (const uint8_t *)token;
 }
 
 GestU32Char gestUniNextU32Char(struct GestStr *iter, int lossy) {

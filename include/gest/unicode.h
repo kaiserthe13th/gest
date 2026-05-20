@@ -15,8 +15,14 @@ typedef uint32_t GestU32Char;
 
 struct GestStr;
 
+/// Returns an opaque token which can be used to seek back to the current state of the iterator.
+/// @param iter The iterator to save the state of.
+/// @return An opaque token denoting the position of the iterator.
 const void *gestUniIterSaveState(struct GestStr *iter);
-void gestUniIterSeek(struct GestStr *iter, const void *marker);
+/// Takes an opaque token and sets the iterator position to the state it was back when the token was created.
+/// @param iter The iterator to reset the state of.
+/// @param token The opaque token
+void gestUniIterSeek(struct GestStr *iter, const void *token);
 
 /// Takes in a mutable iterator, advances it by one char and returns the new char decoded.
 /// 
