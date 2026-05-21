@@ -59,6 +59,7 @@ newoption {
     },
 }
 
+include "script/githooks.lua"
 include "script/uv-setup.lua"
 include "script/unicode.lua"
 include "script/xg.lua"

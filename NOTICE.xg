@@ -10,6 +10,7 @@
 # - include/gest*/**/*.h
 # - script/**/*.py
 # - script/**/*.lua
+# - .githooks/pre-*
 # - !include/gest-unicode/**/*.h
 # - !src/gest-unicode/**/*.c
 # License-File: LICENSE

@@ -1,0 +1,19 @@
+#!/bin/sh
+# Copyright (c) Kerem Göksu 2026
+# SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
+
+echo "Running license check via premake5..."
+
+# Run premake from the repo root
+premake5 xg
+
+# Capture the exit code of the premake command
+RESULT=$?
+
+if [ $RESULT -ne 0 ]; then
+    echo "❌ License check failed! Push aborted."
+    exit 1
+fi
+
+echo "✅ License check passed. Proceeding with push."
+exit 0
