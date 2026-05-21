@@ -56,10 +56,7 @@ jobs:
           Add-Content -Path $env:GITHUB_PATH -Value 'C:\tools'
 
       - name: Prebuild Setup and Code Generation
-        run: |
-          premake5 uv-setup
-          premake5 download-unicode
-          premake5 gen-unicode-headers
+        run: premake5 prepare
 
       - name: Generate build files (Linux)
         if: matrix.os == 'ubuntu-latest'
