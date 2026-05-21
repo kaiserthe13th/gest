@@ -48,9 +48,7 @@ Requirements: [premake](https://premake.github.io/), [uv](https://docs.astral.sh
 2. Set up the environment using premake.
 
    ```console
-   $ premake5 uv-setup # to set up the python environment
-   $ premake5 download-unicode # downloads the unicode UCD files necessary
-   $ premake5 gen-unicode-headers # generates unicode headers
+   premake5 prepare
    ```
 
 3. You can play around and compile with premake.
