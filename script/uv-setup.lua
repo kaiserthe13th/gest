@@ -26,3 +26,5 @@ newaction {
     description = "Use uv to set up a python virtual environment",
     execute     = M.uvSetup,
 }
+
+return M

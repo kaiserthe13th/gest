@@ -59,10 +59,69 @@ newoption {
     },
 }
 
-include "script/githooks.lua"
-include "script/uv-setup.lua"
-include "script/unicode.lua"
+local githooks = include "script/githooks.lua"
+local uvSetup = include "script/uv-setup.lua"
+local unicode = include "script/unicode.lua"
 include "script/xg.lua"
+
+newaction {
+    trigger     = "prepare",
+    description = "Fully prepares the project for compilation",
+    execute     = function()
+        -- Git hooks
+        io.write("Are git hooks needed? ")
+        local gitHooksFile = io.open(githooks.completionFile, "r")
+        if gitHooksFile then
+            print("No (cached). [Run githooks-setup to force refresh]")
+            gitHooksFile:close()
+        else
+            print("Yes (no cache found)")
+            print("Running action 'githooks-setup'...")
+            githooks.setupGithooks()
+        end
+        -- uv
+        print("Running action 'uv-setup'...")
+        uvSetup.uvSetup()
+        -- UCD
+        io.write("Is it needed to download unicode UCD files? ")
+        local unicodeDlFile = io.open(unicode.downloadCompletionFile)
+        if unicodeDlFile then
+            unicodeDlFile:close()
+            local cachedHash = io.readfile(unicode.downloadCompletionFile)
+            local scriptHash = util.contentHashOf(unicode.dlPyFile)
+            if cachedHash ~= scriptHash then
+                print("Yes (cache invalidated)")
+                print("Running action 'download-unicode'...")
+                unicode.downloadUnicode()
+            else
+                print("No (cached). [Run download-unicode or delete " .. unicode.downloadCompletionFile .. " to force refresh]")
+            end
+        else
+            print("Yes (no cache found)")
+            print("Running action 'download-unicode'...")
+            unicode.downloadUnicode()
+        end
+        -- Unicode Gen
+        io.write("Is it needed to generate unicode headers? ")
+        local unicodeGenFile = io.open(unicode.generationCompletionFile)
+        if unicodeGenFile then
+            unicodeGenFile:close()
+            local cachedHash = io.readfile(unicode.generationCompletionFile)
+            local scriptHash = util.contentHashOf(unicode.genPyFile)
+            if cachedHash ~= scriptHash then
+                print("Yes (cache invalidated)")
+                print("Running action 'gen-unicode-headers'...")
+                unicode.generateUnicodeHeaders()
+            else
+                print("No (cached). [Run gen-unicode-headers or delete ".. unicode.generationCompletionFile .. " to force refresh]")
+            end
+        else
+            print("Yes (no cache found)")
+            print("Running action 'gen-unicode-headers'...")
+            unicode.generateUnicodeHeaders()
+        end
+    end,
+}
 
 local channel = _OPTIONS['channel'] or print("defaulting channel to unknown") or "unknown"
 local channelVal = channels[channel] or print("defaulting channel to unknown") or channels["unknown"]

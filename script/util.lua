@@ -20,4 +20,12 @@ function M.mpath(p, ...)
     return path.join(_MAIN_SCRIPT_DIR, p, ...)
 end
 
+--- returns the content hash of the given path if exists, otherwise nil
+---@param filepath string
+---@return string
+function M.contentHashOf(filepath)
+    local contents = io.readfile(filepath)
+    return contents and os.uuid(contents) or nil
+end
+
 return M

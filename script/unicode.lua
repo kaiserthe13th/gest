@@ -4,22 +4,26 @@
 local util = require("script.util")
 local M = {}
 
+M.targetDir = util.mpath(path.join("data", "unicode"))
+M.downloadCompletionFile = path.join(M.targetDir, ".unicode_dl")
+M.generationCompletionFile = path.join(M.targetDir, ".unicode_gen")
+
+M.dlPyFile = util.mpath(path.join("script", "unicode", "dl.py"))
+
 function M.downloadUnicode()
-    local target_dir = util.mpath(path.join("data", "unicode"))
     local script_dir = util.mpath("script")
-    local dl_py_file = util.mpath(path.join("script", "unicode", "dl.py"))
 
     print("Creating data/unicode...")
-    os.mkdir(target_dir)
+    os.mkdir(M.targetDir)
     
     io.write("Selecting tool... ")
     local cmd
     if _OPTIONS['no-uv'] then
         print("Using: python [" .. PYTHON .. "]")
-        cmd = string.format('"%s" "%s" "%s"', PYTHON, dl_py_file, target_dir)
+        cmd = string.format('"%s" "%s" "%s"', PYTHON, M.dlPyFile, M.targetDir)
     else
         print("Using: uv")
-        cmd = string.format('uv run --project "%s" "%s" "%s"', script_dir, dl_py_file, target_dir)
+        cmd = string.format('uv run --project "%s" "%s" "%s"', script_dir, M.dlPyFile, M.targetDir)
     end
     print("Running script/unicode/dl.py")
 
@@ -30,6 +34,12 @@ function M.downloadUnicode()
         print("\nError: Program exit unsuccessfully.")
         os.exit(1)
     end
+
+    print("Creating completion file...")
+    local cacheFile = io.open(M.downloadCompletionFile, "w")
+    local hash = util.contentHashOf(M.dlPyFile)
+    cacheFile:write(hash)
+    cacheFile:close()
 end
 
 newaction {
@@ -38,12 +48,13 @@ newaction {
     execute     = M.downloadUnicode,
 }
 
-local function generateUnicodeHeaders()
+M.genPyFile = util.mpath(path.join("script", "unicode", "gen.py"))
+
+function M.generateUnicodeHeaders()
     local target_header_dir = util.mpath(path.join("include", "gest", "_generated"))
     local target_code_dir = util.mpath(path.join("src", "gest", "_generated"))
     local script_dir = util.mpath("script")
     local data_dir = util.mpath("data")
-    local gen_py_file = util.mpath(path.join("script", "unicode", "gen.py"))
 
     print("Creating include/gest/_generated...")
     os.mkdir(target_header_dir)
@@ -54,10 +65,10 @@ local function generateUnicodeHeaders()
     local cmd
     if _OPTIONS['no-uv'] then
         print("Using: python [" .. PYTHON .. "]")
-        cmd = string.format('"%s" "%s" -s -D "%s" -H "%s" -c "%s"', PYTHON, gen_py_file, data_dir, path.join(target_header_dir, "_unicode.h"), path.join(target_code_dir, "_unicode.c"))
+        cmd = string.format('"%s" "%s" -s -D "%s" -H "%s" -c "%s"', PYTHON, M.genPyFile, data_dir, path.join(target_header_dir, "_unicode.h"), path.join(target_code_dir, "_unicode.c"))
     else
         print("Using: uv")
-        cmd = string.format('"uv" run --project "%s" "%s" -s -D "%s" -H "%s" -c "%s"', script_dir, gen_py_file, data_dir, path.join(target_header_dir, "_unicode.h"), path.join(target_code_dir, "_unicode.c"))
+        cmd = string.format('"uv" run --project "%s" "%s" -s -D "%s" -H "%s" -c "%s"', script_dir, M.genPyFile, data_dir, path.join(target_header_dir, "_unicode.h"), path.join(target_code_dir, "_unicode.c"))
     end
     print("Running script/unicode/gen.py")
 
@@ -68,10 +79,16 @@ local function generateUnicodeHeaders()
         print("\nError: Program exit unsuccessfully.")
         os.exit(1)
     end
+    local cacheFile = io.open(M.generationCompletionFile, "w")
+    local hash = util.contentHashOf(M.genPyFile)
+    cacheFile:write(hash)
+    cacheFile:close()
 end
 
 newaction {
     trigger     = "gen-unicode-headers",
     description = "Generate the unicode headers necessary to compile the project from the unicode files downloaded.",
-    execute     = generateUnicodeHeaders,
+    execute     = M.generateUnicodeHeaders,
 }
+
+return M
