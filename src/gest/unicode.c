@@ -122,7 +122,7 @@ struct GestUTF8EncodedChar gestUniC32EncodeUTF8(GestU32Char u32c) {
         result.enc[0] = GEST_UTF8_3BYTE_SEQ_PR | (u32c >> 12);
         result.enc[1] = GEST_CONTINUATION_BYTE | ((u32c >> 6) & 0x3F);
         result.enc[2] = GEST_CONTINUATION_BYTE | (u32c & 0x3F);
-    } else if (u32c < 0x11FFFF) {
+    } else if (u32c < 0x110000) {
         result.length = 4;
         result.enc[0] = GEST_UTF8_4BYTE_SEQ_PR | (u32c >> 18);
         result.enc[1] = GEST_CONTINUATION_BYTE | ((u32c >> 12) & 0x3F);
