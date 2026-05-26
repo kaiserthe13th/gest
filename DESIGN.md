@@ -68,7 +68,7 @@ factor = cfactor
        ;
 
 (* Unary *)
-postfix = factor, { identifier };
+postfix = factor, { identifier }, [identifier, { ":", identifier }];
 prefix = { ("+" | "-") }, postfix;
 mul_div = prefix, { ("*" | "/" | "//" | "\\\\"), prefix };
 add_sub = mul_div, { ("+" | "-" | "++"), mul_div };
@@ -96,7 +96,7 @@ argument = identifier, E, ":", assoc;
 msg_arg = { argument, { ",", argument } };
 message = assoc, msg_arg;
 
-id_chain = identifier, { identifier };
+id_chain = identifier, { identifier }, { ":", identifier };
 imsg_arg = (identifier, { identifier } | msg_arg);
 cascade = message, { ";", imsg_arg };
 feed = cascade, { "|>", cascade };
@@ -266,6 +266,17 @@ expr := Expr parse: exprStr.
 result := expr solve.
 
 Io printLn: 'Result: ' ++ result.
+```
+
+#### :thread: Left Pad String
+
+```smalltalk
+String leftPad : with := @[|width, char|
+    padNeeded := width - self length.
+    padNeeded <= 0 ifTrue: [^self].
+    ^char repeat: padNeeded |> $ ++ self.
+].
+String leftPad := @[|leftPad| ^self leftPad: leftPad, with: $' '].
 ```
 
 ## Architecture
