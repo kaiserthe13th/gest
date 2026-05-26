@@ -102,8 +102,8 @@ GestU32Char gestUniNextU32Char(struct GestStr *iter, int lossy) {
     }
 }
 
-struct GestUTF8EncodedChar__ gestUniC32EncodeUTF8(GestU32Char u32c) {
-    struct GestUTF8EncodedChar__ result = {0};
+struct GestUTF8EncodedChar gestUniC32EncodeUTF8(GestU32Char u32c) {
+    struct GestUTF8EncodedChar result = {0};
 
     if (u32c < 0x80) {
         result.length = 1;
