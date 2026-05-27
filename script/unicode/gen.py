@@ -507,6 +507,7 @@ def main(args) -> None:
     composition_exclusions_path = unicode_dir / "CompositionExclusions.txt"
     derived_normalization_props_path = unicode_dir / "DerivedNormalizationProps.txt"
     derived_core_properties_path = unicode_dir / "DerivedCoreProperties.txt"
+    prop_list_path = unicode_dir / "PropList.txt"
     unicode_data_path = unicode_dir / "UnicodeData.txt"
 
     unidata_list: list[UnicodeDataRow] = []
@@ -567,6 +568,7 @@ def main(args) -> None:
         derived_normalization_props_path
     )
     derived_core_properties_props = parse_ucd_properties(derived_core_properties_path)
+    prop_list = parse_ucd_properties(prop_list_path)
 
     composition_exclusions = unify_ranges(composition_exclusions)
     if "read" in args.time:
@@ -577,6 +579,7 @@ def main(args) -> None:
         for k, v in chain(
             derivation_normalisation_props.items(),
             derived_core_properties_props.items(),
+            prop_list.items(),
         )
         if isinstance(v, list)
     ]

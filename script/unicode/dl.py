@@ -63,6 +63,11 @@ def main(dir):
             "DerivedCoreProperties.txt",
             "DerivedCoreProperties.txt",
         ),
+        (
+            "Prop List",
+            "PropList.txt",
+            "PropList.txt",
+        ),
         ("Unicode Data", "UnicodeData.txt", "UnicodeData.txt"),
     ]
 
