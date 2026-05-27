@@ -11,8 +11,8 @@
 # - script/**/*.py
 # - script/**/*.lua
 # - .githooks/pre-*
-# - !include/gest-unicode/**/*.h
-# - !src/gest-unicode/**/*.c
+# - !include/gest/_generated/_unicode.h
+# - !src/gest/_generated/_unicode.c
 # License-File: LICENSE
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 # Copyright:
@@ -32,9 +32,8 @@ This product includes software developed by Kerem Göksu.
 # --- XG ---
 # Project-Name: Unicode Data Files
 # Files:
-# - build/gest-unicode/*
-# - include/gest-unicode/**.h
-# - src/gest-unicode/**.c
+# - include/gest/_generated/_unicode.h
+# - src/gest/_generated/_unicode.c
 # License-File: <VERBATIM>
 # SPDX-License-Identifier: Unicode-3.0
 # Upstream: true
