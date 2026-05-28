@@ -102,6 +102,18 @@ GestU32Char gestUniNextU32Char(struct GestStr *iter, int lossy) {
     }
 }
 
+GestU32Char gestUniPeekU32Char(size_t n, struct GestStr iter, int lossy) {
+    while (n > 0) {
+        GestU32Char ch = gestUniNextU32Char(&iter, lossy);
+        int isError = ch == GEST_UNI_U32C_REPLACEMENT_CHARACTER && gestErrno != GEST_ENONE;
+        if (ch == GEST_U32C_EOF || isError) {
+            return ch;
+        }
+        n--;
+    }
+    return gestUniNextU32Char(&iter, lossy);
+}
+
 struct GestUTF8EncodedChar gestUniC32EncodeUTF8(GestU32Char u32c) {
     struct GestUTF8EncodedChar result = {0};
 

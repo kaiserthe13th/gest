@@ -19,29 +19,45 @@ struct GestStr;
 /// @param iter The iterator to save the state of.
 /// @return An opaque token denoting the position of the iterator.
 const void *gestUniIterSaveState(struct GestStr *iter);
-/// Takes an opaque token and sets the iterator position to the state it was back when the token was created.
+/// Takes an opaque token and sets the iterator position to the state it was back when the token was
+/// created.
 /// @param iter The iterator to reset the state of.
 /// @param token The opaque token
 void gestUniIterSeek(struct GestStr *iter, const void *token);
 
 /// Takes in a mutable iterator, advances it by one char and returns the new char decoded.
-/// 
+///
 /// @param iter The iterator to advance
 /// @param lossy If non-zero, the iterator skips over broken chars (ignoring errors)
 /// @return The decoded `GestU32Char` character.
-/// @retval `GEST_UNI_U32C_REPLACEMENT_CHARACTER` If a decoding error occurs and `lossy` is zero (`gestErrno` will be set).
+/// @retval `GEST_UNI_U32C_REPLACEMENT_CHARACTER` If a decoding error occurs and `lossy` is zero
+/// (`gestErrno` will be set).
 /// @retval `GEST_U32C_EOF` If the end of the stream is reached.
 GestU32Char gestUniNextU32Char(struct GestStr *iter, int lossy);
+
+/// Takes in a constant iterator, peeks by `n` chars (that is, peeks at the character that has `n`
+/// chars between it and the last viewed char), and returns the decoded char
+///
+/// @param n How many characters to peek by (0 is equivalent to the next char)
+/// @param iter The iterator to peek
+/// @param lossy If non-zero, the iterator skips over broken chars (ignoring errors)
+/// @return The decoded `GestU32Char` character.
+/// @retval `GEST_UNI_U32C_REPLACEMENT_CHARACTER` If a decoding error occurs and `lossy` is zero
+/// (`gestErrno` will be set).
+/// @retval `GEST_U32C_EOF` If the end of the stream is reached.
+GestU32Char gestUniPeekU32Char(size_t n, struct GestStr iter, int lossy);
 
 struct GestUTF8EncodedChar {
     uint8_t length;
     uint8_t enc[4];
 };
 
-/// Takes in a codepoint and outputs a UTF-8 encoded char, which specifies the length and the raw bytes in it.
+/// Takes in a codepoint and outputs a UTF-8 encoded char, which specifies the length and the raw
+/// bytes in it.
 ///
 /// @param u32c The codepoint to encode.
-/// @return the encoded char, if the codepoint is invalid, a 0-length encoding will be returned with `gestErrno` set.
+/// @return the encoded char, if the codepoint is invalid, a 0-length encoding will be returned with
+/// `gestErrno` set.
 struct GestUTF8EncodedChar gestUniC32EncodeUTF8(GestU32Char u32c);
 
 #endif // GEST_NOGEN_UNICODE_H
