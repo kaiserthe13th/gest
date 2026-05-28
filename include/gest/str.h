@@ -25,7 +25,7 @@ struct GestStr {
     const uint8_t *chars;
 };
 
-#define gstrlit(s) ((GestStr){ sizeof(s) - 1, s })
+#define gstrlit(s) { sizeof(s) - 1, s }
 
 struct GestStrBuf {
     GestAllocator *alloc;
