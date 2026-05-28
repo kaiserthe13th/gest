@@ -55,6 +55,22 @@ jobs:
           Move-Item premake5.exe C:\tools\premake5.exe -Force
           Add-Content -Path $env:GITHUB_PATH -Value 'C:\tools'
 
+      - name: Cache Build Artifacts, Python Venv, and Unicode Data
+        uses: actions/cache@v4
+        with:
+          path: |
+            script/.venv
+            data/.githooks_complete
+            data/unicode
+            include/gest/_generated
+            src/gest/_generated
+            build
+          # The key updates if the OS changes or your python setup / scripts change
+          key: ${{ matrix.os }}-gest-prep-${{ hashFiles('script/pyproject.toml', 'script/uv.lock', 'script/unicode/dl.py', 'script/unicode/gen.py') }}
+          # Fallback to the latest cache for this OS if there isn't an exact match
+          restore-keys: |
+            ${{ matrix.os }}-gest-prep-
+
       - name: Prebuild Setup and Code Generation
         run: premake5 prepare
 
