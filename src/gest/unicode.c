@@ -21,8 +21,8 @@ void gestUniIterSeek(struct GestStr *iter, const void *token) {
 }
 
 GestU32Char gestUniNextU32Char(struct GestStr *iter, int lossy) {
+    gestErrno = GEST_ENONE;
     while (1) {
-        gestErrno = GEST_ENONE;
         if (iter->length <= 0) return GEST_U32C_EOF;
 
         uint32_t codepoint;
