@@ -176,7 +176,7 @@ Integer fac := @[
 
 ```smalltalk
 rule110 := ^[ |withDepth|
-    printState := [ |state|
+    printState := ^[ |state|
         (depth - 1 => 0) stepBy: -1 |> $ forEach: [|i|
             Io print: (state >> i) & 1 ifTrue: ' ', else: '#'.
         ].
@@ -276,7 +276,7 @@ String leftPad : with := @[|width, char|
     padNeeded <= 0 ifTrue: [^self].
     ^char repeat: padNeeded |> $ ++ self.
 ].
-String leftPad := @[|leftPad| ^self leftPad: leftPad, with: $' '].
+String leftPad := @[|width| ^self leftPad: width, with: $' '].
 ```
 
 ## Architecture
