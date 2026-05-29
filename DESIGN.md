@@ -177,7 +177,7 @@ Integer fac := @[
 ```smalltalk
 rule110 := ^[ |withDepth|
     printState := ^[ |state|
-        (depth - 1 => 0) stepBy: -1 |> $ forEach: [|i|
+        (withDepth - 1 => 0) stepBy: -1 |> $ forEach: [|i|
             Io print: (state >> i) & 1 ifTrue: ' ', else: '#'.
         ].
     ].
